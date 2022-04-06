@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:personnal_expend/transaction.dart';
+import 'package:personnal_expend/new_transaction.dart';
+import 'transaction.dart';
+import 'transaction_list.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,14 +14,29 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter App',
-      home: MyHomePage(),
+      title: 'Personal Expenses',
+      theme: ThemeData(
+        primarySwatch: Colors.purple,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
+            .copyWith(
+                secondary: Colors.amber,
+                primary: Colors.purple // Your accent color
+                ),
+      ),
+      home: const MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  final List<Transaction> transactions = [
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key}) : super(key: key);
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final List<Transaction> _useTransactions = [
     Transaction(
         id: 't1', date: DateTime.now(), title: "New shoes", amount: 69.99),
     Transaction(
@@ -30,96 +46,65 @@ class MyHomePage extends StatelessWidget {
         amount: 16.53)
   ];
 
-  String titleInput = '';
-  String amountInput = '';
+  void _addNewTransaction(String title, double amount) {
+    final date = DateTime.now();
 
-  MyHomePage({Key? key}) : super(key: key);
+    final tx = Transaction(
+        id: date.toString(), date: date, title: title, amount: amount);
+    setState(() {
+      _useTransactions.add(tx);
+    });
+  }
+
+  void _startAddTransaction(BuildContext ctx) {
+    showModalBottomSheet(
+        context: ctx,
+        builder: (bCtx) {
+          return GestureDetector(
+            onTap: () {},
+            child: NewTransaction(addTransaction: _addNewTransaction),
+            behavior: HitTestBehavior.opaque,
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Flutter App'),
+          title: const Text('Personal Expenses'),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  _startAddTransaction(context);
+                },
+                icon: const Icon(Icons.add))
+          ],
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(
-              width: double.infinity,
-              child: Card(
-                color: Colors.blue,
-                child: Text('Hello'),
-                elevation: 5,
-              ),
-            ),
-            Card(
-              elevation: 5,
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    TextField(
-                      decoration: const InputDecoration(labelText: 'Title'),
-                      onChanged: (val) {
-                        titleInput = val;
-                      },
-                    ),
-                    TextField(
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(labelText: 'Amount'),
-                      onChanged: (val) {
-                        amountInput = val;
-                      },
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      style: TextButton.styleFrom(primary: Colors.purple),
-                      child: const Text(
-                        "Add Transaction",
-                      ),
-                    )
-                  ],
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: Card(
+                  color: Theme.of(context).primaryColor,
+                  child: const Text('Hello'),
+                  elevation: 5,
                 ),
               ),
-            ),
-            Column(
-              children: transactions.map((tx) {
-                return Card(
-                    child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.purple, width: 2)),
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 15),
-                      padding: const EdgeInsets.all(10),
-                      child: Text('\$${tx.amount}',
-                          style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.purple)),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          tx.title,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        Text(
-                          DateFormat.yMMMd().format(tx.date),
-                          style: const TextStyle(color: Colors.grey),
-                        )
-                      ],
-                    )
-                  ],
-                ));
-              }).toList(),
-            )
-          ],
+              TransactionList(
+                transactions: _useTransactions,
+              )
+            ],
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _startAddTransaction(context);
+          },
+          child: const Icon(Icons.add),
         ));
   }
 }
