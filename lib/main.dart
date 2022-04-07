@@ -16,13 +16,23 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Personal Expenses',
       theme: ThemeData(
-        primarySwatch: Colors.purple,
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
-            .copyWith(
-                secondary: Colors.amber,
-                primary: Colors.purple // Your accent color
-                ),
-      ),
+          primarySwatch: Colors.purple,
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
+              .copyWith(
+                  secondary: Colors.amber,
+                  primary: Colors.purple // Your accent color
+                  ),
+          fontFamily: 'QuickSand',
+          textTheme: ThemeData.light().textTheme.copyWith(
+              titleMedium: const TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold)),
+          appBarTheme: const AppBarTheme(
+              titleTextStyle: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold))),
       home: const MyHomePage(),
     );
   }
@@ -37,13 +47,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _useTransactions = [
-    Transaction(
-        id: 't1', date: DateTime.now(), title: "New shoes", amount: 69.99),
-    Transaction(
-        id: 't2',
-        date: DateTime.now(),
-        title: "Weekly Groceries",
-        amount: 16.53)
+    // Transaction(
+    //     id: 't1', date: DateTime.now(), title: "New shoes", amount: 69.99),
+    // Transaction(
+    //     id: 't2',
+    //     date: DateTime.now(),
+    //     title: "Weekly Groceries",
+    //     amount: 16.53)
   ];
 
   void _addNewTransaction(String title, double amount) {
