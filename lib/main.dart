@@ -5,6 +5,9 @@ import 'transaction.dart';
 import 'transaction_list.dart';
 
 void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations(
+  //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const MyApp());
 }
 
@@ -95,25 +98,36 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: const Text('Personal Expenses'),
+      actions: [
+        IconButton(
+            onPressed: () {
+              _startAddTransaction(context);
+            },
+            icon: const Icon(Icons.add))
+      ],
+    );
+    final availableHeight = (MediaQuery.of(context).size.height -
+        appBar.preferredSize.height -
+        MediaQuery.of(context).padding.top);
+    final curScaleFactor = MediaQuery.of(context).textScaleFactor;
+
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Personal Expenses'),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  _startAddTransaction(context);
-                },
-                icon: const Icon(Icons.add))
-          ],
-        ),
+        appBar: appBar,
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Chart(recentTransactions: _recentTransaction),
-              TransactionList(
-                transactions: _useTransactions,
-                deleteTransaction: _deleteTransaction,
+              SizedBox(
+                  height: availableHeight * 0.4,
+                  child: Chart(recentTransactions: _recentTransaction)),
+              SizedBox(
+                height: availableHeight * 0.6,
+                child: TransactionList(
+                  transactions: _useTransactions,
+                  deleteTransaction: _deleteTransaction,
+                ),
               )
             ],
           ),
