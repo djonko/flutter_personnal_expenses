@@ -96,6 +96,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  bool _showChart = false;
+
   @override
   Widget build(BuildContext context) {
     final appBar = AppBar(
@@ -111,7 +113,26 @@ class _MyHomePageState extends State<MyHomePage> {
     final availableHeight = (MediaQuery.of(context).size.height -
         appBar.preferredSize.height -
         MediaQuery.of(context).padding.top);
-    final curScaleFactor = MediaQuery.of(context).textScaleFactor;
+    //final curScaleFactor = MediaQuery.of(context).textScaleFactor;
+
+    final isLandscapeMode =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    chartBox(heightPct) {
+      return SizedBox(
+          height: availableHeight * heightPct,
+          child: Chart(recentTransactions: _recentTransaction));
+    }
+
+    listTransactionBox(heightPct) {
+      return SizedBox(
+        height: availableHeight * heightPct,
+        child: TransactionList(
+          transactions: _useTransactions,
+          deleteTransaction: _deleteTransaction,
+        ),
+      );
+    }
 
     return Scaffold(
         appBar: appBar,
@@ -119,16 +140,26 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(
-                  height: availableHeight * 0.4,
-                  child: Chart(recentTransactions: _recentTransaction)),
-              SizedBox(
-                height: availableHeight * 0.6,
-                child: TransactionList(
-                  transactions: _useTransactions,
-                  deleteTransaction: _deleteTransaction,
+              if (isLandscapeMode)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Show Chart'),
+                    Switch(
+                        value: _showChart,
+                        onChanged: (value) {
+                          setState(() {
+                            _showChart = value;
+                          });
+                        })
+                  ],
                 ),
-              )
+              if (!isLandscapeMode)
+                Column(
+                  children: [chartBox(0.4), listTransactionBox(0.6)],
+                ),
+              if (isLandscapeMode)
+                _showChart ? chartBox(0.8) : listTransactionBox(0.8)
             ],
           ),
         ),
