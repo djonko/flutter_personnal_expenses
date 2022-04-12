@@ -100,6 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
     final appBar = AppBar(
       title: const Text('Personal Expenses'),
       actions: [
@@ -112,11 +113,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     final availableHeight = (MediaQuery.of(context).size.height -
         appBar.preferredSize.height -
-        MediaQuery.of(context).padding.top);
+        mediaQuery.padding.top);
     //final curScaleFactor = MediaQuery.of(context).textScaleFactor;
 
-    final isLandscapeMode =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscapeMode = mediaQuery.orientation == Orientation.landscape;
 
     chartBox(heightPct) {
       return SizedBox(

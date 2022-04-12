@@ -12,6 +12,34 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    iconButtonDelete(String id) {
+      return IconButton(
+        icon: Icon(
+          Icons.delete,
+          color: Theme.of(context).errorColor,
+        ),
+        onPressed: () {
+          deleteTransaction(id);
+        },
+      );
+    }
+
+    iconTextButtonDelete(String id) {
+      return TextButton.icon(
+        icon: Icon(
+          Icons.delete,
+          color: Theme.of(context).errorColor,
+        ),
+        label: Text(
+          'Delete',
+          style: TextStyle(color: Theme.of(context).errorColor),
+        ),
+        onPressed: () {
+          deleteTransaction(id);
+        },
+      );
+    }
+
     return SafeArea(
       child: transactions.isEmpty
           ? LayoutBuilder(builder: (context, constraints) {
@@ -42,30 +70,24 @@ class TransactionList extends StatelessWidget {
                     margin:
                         const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
                     child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 30,
-                        child: Padding(
-                          padding: const EdgeInsets.all(6),
-                          child: FittedBox(
-                              child: Text('\$${tx.amount.toStringAsFixed(2)}')),
+                        leading: CircleAvatar(
+                          radius: 30,
+                          child: Padding(
+                            padding: const EdgeInsets.all(6),
+                            child: FittedBox(
+                                child:
+                                    Text('\$${tx.amount.toStringAsFixed(2)}')),
+                          ),
                         ),
-                      ),
-                      title: Text(tx.title,
-                          style: Theme.of(context).textTheme.titleMedium),
-                      subtitle: Text(
-                        DateFormat.yMMMd().format(tx.date),
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(
-                          Icons.delete,
-                          color: Theme.of(context).errorColor,
+                        title: Text(tx.title,
+                            style: Theme.of(context).textTheme.titleMedium),
+                        subtitle: Text(
+                          DateFormat.yMMMd().format(tx.date),
+                          style: const TextStyle(color: Colors.grey),
                         ),
-                        onPressed: () {
-                          deleteTransaction(tx.id);
-                        },
-                      ),
-                    ));
+                        trailing: MediaQuery.of(context).size.width > 460
+                            ? iconTextButtonDelete(tx.id)
+                            : iconButtonDelete(tx.id)));
               },
               itemCount: transactions.length,
             ),
