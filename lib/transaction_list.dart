@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import './transaction.dart';
+import 'transaction_item.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -12,34 +12,6 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    iconButtonDelete(String id) {
-      return IconButton(
-        icon: Icon(
-          Icons.delete,
-          color: Theme.of(context).errorColor,
-        ),
-        onPressed: () {
-          deleteTransaction(id);
-        },
-      );
-    }
-
-    iconTextButtonDelete(String id) {
-      return TextButton.icon(
-        icon: Icon(
-          Icons.delete,
-          color: Theme.of(context).errorColor,
-        ),
-        label: Text(
-          'Delete',
-          style: TextStyle(color: Theme.of(context).errorColor),
-        ),
-        onPressed: () {
-          deleteTransaction(id);
-        },
-      );
-    }
-
     return SafeArea(
       child: transactions.isEmpty
           ? LayoutBuilder(builder: (context, constraints) {
@@ -53,41 +25,20 @@ class TransactionList extends StatelessWidget {
                     height: 20,
                   ),
                   SizedBox(
-                      height: constraints.maxHeight * 0.55,
-                      child: Image.asset(
-                        'assets/images/waiting.png',
-                        fit: BoxFit.cover,
-                      ))
+                    height: constraints.maxHeight * 0.55,
+                    child: Image.asset(
+                      'assets/images/waiting.png',
+                      fit: BoxFit.cover,
+                    ),
+                  )
                 ],
               );
             })
           : ListView.builder(
               itemBuilder: (context, index) {
                 final tx = transactions[index];
-                return Card(
-                    key: Key(tx.id),
-                    elevation: 5,
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                    child: ListTile(
-                        leading: CircleAvatar(
-                          radius: 30,
-                          child: Padding(
-                            padding: const EdgeInsets.all(6),
-                            child: FittedBox(
-                                child:
-                                    Text('\$${tx.amount.toStringAsFixed(2)}')),
-                          ),
-                        ),
-                        title: Text(tx.title,
-                            style: Theme.of(context).textTheme.titleMedium),
-                        subtitle: Text(
-                          DateFormat.yMMMd().format(tx.date),
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                        trailing: MediaQuery.of(context).size.width > 460
-                            ? iconTextButtonDelete(tx.id)
-                            : iconButtonDelete(tx.id)));
+                return TransactionItem(
+                    transaction: tx, deleteTransaction: deleteTransaction);
               },
               itemCount: transactions.length,
             ),
